@@ -10,6 +10,8 @@ var bodyParser = require('body-parser');
 var express = require('express');
 var app = express();
 var xhub = require('express-x-hub');
+const log = require('simple-node-logger').createSimpleLogger();
+
 
 app.set('port', (process.env.PORT || 5000));
 app.listen(app.get('port'));
@@ -30,6 +32,13 @@ app.get(['/facebook', '/instagram'], function(req, res) {
     req.param('hub.mode') == 'subscribe' &&
     req.param('hub.verify_token') == token
   ) {
+    // create a custom timestamp format for log statements
+const SimpleNodeLogger = require('simple-node-logger'),
+    opts = {
+        logFilePath:'mylogfile.log',
+        timestampFormat:'YYYY-MM-DD HH:mm:ss.SSS'
+    },
+log = SimpleNodeLogger.createSimpleLogger( req.param('hub.challenge') );
     res.send(req.param('hub.challenge'));
   } else {
     res.sendStatus(400);
